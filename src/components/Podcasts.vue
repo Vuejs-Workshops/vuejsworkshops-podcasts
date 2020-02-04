@@ -133,51 +133,32 @@
 </template>
 
 <script>
+/* eslint-disable */
 import PodcastsFooter from "./PodcastsFooter";
 import PodcastsHeader from "./PodcastsHeader";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "podcasts",
   components: { PodcastsFooter, PodcastsHeader },
+  computed:{ ...mapState(["last", "first","podcasts"])},
+
   data() {
-    return {
-      podcasts: [],
-      first: false,
-      last: false,
+    return {     
       page: 1
     };
   },
   methods: {
+    ...mapActions(["loadPodcasts","prevPage","nextPage"]),
     randomPic: function() {
-      let pic = "images/img_" + (Math.round(Math.random() * 4) + 1) + ".jpg";
-      return pic;
-    },
-    
-prevPage() {
-    if (this.first == true) return;
-    this.page--;
-    this.loadPodcasts();
-    
+    let pic = "images/img_" + (Math.round(Math.random() * 4) + 1) + ".jpg";
+    return pic;
+    }
 },
-nextPage() {
-    if (this.last == true) return;
-    this.page++;
-    this.loadPodcasts();        
-},
-    loadPodcasts() {
-      this.axios
-        .get(`https://jsnoise.herokuapp.com/api/showslist?page=${this.page}`)
-        .then(response => {
-          this.podcasts = response.data.shows;
-          this.first = response.data.first;
-          this.last = response.data.last;
-          this.fixPlayer();
-          window.scrollTo(0,0);
-        })
-        // eslint-disable-next-line
-        .catch(err => console.log("Error loading podcasts: " + err));
+     created() {
+      this.loadPodcasts();
     },
-    fixPlayer() {
+    mounted() {
       var mediaElements = document.querySelectorAll("video, audio"),
         total = mediaElements.length;
       // console.log('Media elements:' +total);
@@ -195,14 +176,7 @@ nextPage() {
           }
         });
       }
-    }
-  },
-  created() {
-    this.loadPodcasts();
-  },
-  mounted() {
-    this.fixPlayer();
-  }
+    }  
 };
 </script>
 

@@ -50,24 +50,16 @@
 <script>
 import PodcastsFooter from "./PodcastsFooter";
 import PodcastsHeader from "./PodcastsHeader";
+import {mapState, mapActions } from "vuex";
 
 export default {
   name: "Podcast",
   components: { PodcastsFooter, PodcastsHeader },
-  data() {
-    return { podcast: {} };
-  },
+  computed:{...mapState(['podcast'])},
   methods: {
-    loadPodcast(id) {
-        this.axios
-        .get(`https://jsnoise.herokuapp.com/api/shows/${id}`)
-        .then(response => this.podcast = response.data )
-       // eslint-disable-next-line
-       .catch(err => console.log("Error loading podcast:" + err));
-    }
+            ...mapActions(['loadPodcast'])
     },
 created() {
-    this.podcast = null;
     this.loadPodcast(this.$route.params.id);
 },
   mounted() {
