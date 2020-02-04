@@ -8,28 +8,28 @@
       data-aos="fade"
       data-stellar-background-ratio="0.5"
     >
-      <div class="container">
+      <div v-if="topPodcast" class="container">
         <div class="row align-items-center justify-content-center text-center">
           <div class="col-md-8" data-aos="fade-up" data-aos-delay="400">
             <h2
               class="text-white font-weight-light mb-2 display-4"
-            >Episode 09: How To Create Web Page Using Bootstrap 4</h2>
+            >{{topPodcast.title}}</h2>
             <div class="text-white mb-4">
               <span class="text-white-opacity-05">
-                <small>By Mike Smith | 16 September 2017 | 1:30:20</small>
+                By {{topPodcast.producerName}}
+                  <span class="sep">/</span>
+                  {{topPodcast.publishedDate | formatDate}}
+                <!-- <small>By Mike Smith | 16 September 2017 | 1:30:20</small> -->
               </span>
             </div>
             <p>
-              <a
-                href="single-post.html"
-                class="btn btn-primary btn-sm py-3 px-4 small"
-              >Read The Transcript</a>
+               <router-link class="btn btn-primary btn-sm py-3 px-4 small" :to="`/${topPodcast.id}`">Read The Transcript</router-link>              
             </p>
 
             <div class="player">
               <audio id="player2" preload="none" controls style="max-width: 100%">
                 <source
-                  src="http://www.largesound.com/ashborytour/sound/AshboryBYU.mp3"
+                  :src="topPodcast.mp3"
                   type="audio/mp3"
                 />
               </audio>
@@ -141,7 +141,12 @@ import { mapState, mapActions } from "vuex";
 export default {
   name: "podcasts",
   components: { PodcastsFooter, PodcastsHeader },
-  computed:{ ...mapState(["last", "first","podcasts"])},
+  computed:{ ...mapState(["last", "first","podcasts"]),
+    topPodcast(){
+    //  if (this.podcasts)
+        return this.podcasts.shift();
+    }
+  },
 
   data() {
     return {     

@@ -17,7 +17,7 @@
                 <small>
                   By {{podcast.producerName}}
                   <span class="sep">/</span>
-                  {{podcast.publishedDate}}
+                  {{podcast.publishedDate | formatDate}}
                 </small>
               </span>
             </div>
