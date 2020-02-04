@@ -143,13 +143,15 @@ export default {
   components: { PodcastsFooter, PodcastsHeader },
   computed:{ ...mapState(["last", "first","podcasts"]),
     topPodcast(){
-    //  if (this.podcasts)
-        return this.podcasts.shift();
+      //if (this.topPodcast == null){
+          this.resetPlayer();
+          return this.podcasts.shift();
+      //}
     }
   },
 
   data() {
-    return {     
+    return {  
       page: 1
     };
   },
@@ -158,12 +160,8 @@ export default {
     randomPic: function() {
     let pic = "images/img_" + (Math.round(Math.random() * 4) + 1) + ".jpg";
     return pic;
-    }
-},
-     created() {
-      this.loadPodcasts();
     },
-    mounted() {
+    resetPlayer(){
       var mediaElements = document.querySelectorAll("video, audio"),
         total = mediaElements.length;
       // console.log('Media elements:' +total);
@@ -181,6 +179,13 @@ export default {
           }
         });
       }
+    }
+},
+     created() {
+      this.loadPodcasts();
+    },
+    mounted() {
+      this.resetPlayer();
     }  
 };
 </script>
