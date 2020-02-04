@@ -15,5 +15,8 @@ export default new Router({
         { path: "/about", component: About },
         { path: "/:id", component: Podcast },
         { path: "*", component: Podcasts }
-  ]
+  ],
+    scrollBehavior() {
+     // window.scrollTo(0,0);
+    }
 })

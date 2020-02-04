@@ -1,5 +1,5 @@
 <template>
-  <div class="site-wrap">
+<div class="site-wrap" v-if="podcast">
     <podcasts-header/>
 
     <div
@@ -57,18 +57,19 @@ export default {
   data() {
     return { podcast: {} };
   },
-  created() {
-    this.podcast = {
-      id: 3107,
-      title: "194: Off the Main Thread",
-      description:
-        '<p>For a lot of software developers running code in separate threads is a common tool to reach for. On the web they are not nearly as widely used but can be just as powerful. Join us this week as Surma talks us through just how useful workers can be and some of the challenges they can help developers solve.</p> <p>Visit the website for This Week in Web, resources & more: <a href= "https://thewebplatformpodcast.com/194-off-the-main-thread">https://thewebplatformpodcast.com/194-off-the-main-thread</a></p> <p> </p> <p>Follow The Web Platform podcast on Twitter for regular updates <a href= "https://twitter.com/TheWebPlatform">@TheWebPlatform</a>.</p>',
-      mp3: "https://traffic.libsyn.com/secure/thewebplatform/TWPP-194.mp3",
-      publishedDate: "2019-10-22T00:17:40",
-      producerName: "The Web Platform podcast",
-      producerId: 10
-    };
-  },
+  methods: {
+    loadPodcast(id) {
+        this.axios
+        .get(`https://jsnoise.herokuapp.com/api/shows/${id}`)
+        .then(response => this.podcast = response.data )
+       // eslint-disable-next-line
+       .catch(err => console.log("Error loading podcast:" + err));
+    }
+    },
+created() {
+    this.podcast = null;
+    this.loadPodcast(this.$route.params.id);
+},
   mounted() {
     var mediaElements = document.querySelectorAll("video, audio"),
       total = mediaElements.length;

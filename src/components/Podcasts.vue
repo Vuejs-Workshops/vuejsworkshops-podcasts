@@ -1,6 +1,6 @@
 <template>
   <div class="site-wrap">
-    <podcasts-header/>
+    <podcasts-header />
 
     <div
       class="site-blocks-cover overlay"
@@ -31,7 +31,7 @@
                 <source
                   src="http://www.largesound.com/ashborytour/sound/AshboryBYU.mp3"
                   type="audio/mp3"
-                >
+                />
               </audio>
             </div>
           </div>
@@ -57,7 +57,7 @@
           <div class="image" :style="{'background-image': 'url(' + randomPic() + ')'}"></div>
           <div class="text">
             <h3 class="font-weight-light">
-                <router-link :to="`/${show.id}`">{{show.title}}</router-link>
+              <router-link :to="`/${show.id}`">{{show.title}}</router-link>
             </h3>
             <div class="text-white mb-3">
               <span class="text-black-opacity-05">
@@ -71,7 +71,7 @@
 
             <div class="player">
               <audio id="player2" preload="none" controls style="max-width:100%">
-                <source :src="show.mp3" type="audio/mp3">
+                <source :src="show.mp3" type="audio/mp3" />
               </audio>
             </div>
           </div>
@@ -84,11 +84,11 @@
             <div class="site-block-27">
               <ul class="text-center">
                 <li>
-                  <a href="#">&lt;</a>
+                  <a @click.prevent="prevPage" v-if=" first === false" href="#">&lt;</a>
                 </li>
 
                 <li>
-                  <a href="#">&gt;</a>
+                  <a @click.prevent="nextPage" v-if=" last === false" href="#">&gt;</a>
                 </li>
               </ul>
             </div>
@@ -117,7 +117,7 @@
                   class="form-control border-secondary text-white bg-transparent"
                   placeholder="What are you searching for ..."
                   aria-describedby="button-addon2"
-                >
+                />
                 <div class="input-group-append">
                   <button class="btn btn-primary" type="button" id="button-addon2">search</button>
                 </div>
@@ -128,7 +128,7 @@
       </div>
     </div>
 
-    <PodcastsFooter/>
+    <PodcastsFooter />
   </div>
 </template>
 
@@ -136,158 +136,73 @@
 import PodcastsFooter from "./PodcastsFooter";
 import PodcastsHeader from "./PodcastsHeader";
 
-
 export default {
   name: "podcasts",
   components: { PodcastsFooter, PodcastsHeader },
   data() {
-    return { podcasts: [], first: false, last: false };
+    return {
+      podcasts: [],
+      first: false,
+      last: false,
+      page: 1
+    };
   },
   methods: {
     randomPic: function() {
       let pic = "images/img_" + (Math.round(Math.random() * 4) + 1) + ".jpg";
       return pic;
+    },
+    
+prevPage() {
+    if (this.first == true) return;
+    this.page--;
+    this.loadPodcasts();
+    
+},
+nextPage() {
+    if (this.last == true) return;
+    this.page++;
+    this.loadPodcasts();        
+},
+    loadPodcasts() {
+      this.axios
+        .get(`https://jsnoise.herokuapp.com/api/showslist?page=${this.page}`)
+        .then(response => {
+          this.podcasts = response.data.shows;
+          this.first = response.data.first;
+          this.last = response.data.last;
+          this.fixPlayer();
+          window.scrollTo(0,0);
+        })
+        // eslint-disable-next-line
+        .catch(err => console.log("Error loading podcasts: " + err));
+    },
+    fixPlayer() {
+      var mediaElements = document.querySelectorAll("video, audio"),
+        total = mediaElements.length;
+      // console.log('Media elements:' +total);
+      for (var i = 0; i < total; i++) {
+        // eslint-disable-next-line
+        new MediaElementPlayer(mediaElements[i], {
+          pluginPath: "https://cdn.jsdelivr.net/npm/mediaelement@4.2.7/build/",
+          shimScriptAccess: "always",
+          success: function() {
+            var target = document.body.querySelectorAll(".player"),
+              targetTotal = target.length;
+            for (var j = 0; j < targetTotal; j++) {
+              target[j].style.visibility = "visible";
+            }
+          }
+        });
+      }
     }
   },
   created() {
-    this.podcasts = [
-      {
-        id: 3117,
-        title:
-          "Ep. #48, Dynamic Static Sites with Shalom Volchok of Digital Optimization Group",
-        description: null,
-        mp3:
-          "https://media.blubrry.com/heavybit/d3aeja1uqhkije.cloudfront.net/podcasts/jamstack-radio/20190924-jamstack-radio-048.mp3",
-        publishedDate: "2019-10-24T16:45:00",
-        producerName: "jam stack",
-        producerId: 18
-      },
-      {
-        id: 3116,
-        title: "JSJ 403: Why Developers Need Social Skills with Mani Vaya",
-        description: null,
-        mp3: "https://media.devchat.tv/js-jabber/JSJ_403_Mani_Vaya.mp3",
-        publishedDate: "2019-10-24T10:00:00",
-        producerName: "JS Jabber",
-        producerId: 14
-      },
-      {
-        id: 3115,
-        title:
-          "126: James Long - Building Distributed Local-First JavaScript Applications",
-        description: null,
-        mp3: "https://audio.simplecast.com/47bda01c.mp3",
-        publishedDate: "2019-10-23T14:10:00",
-        producerName: "full stack radio",
-        producerId: 16
-      },
-      {
-        id: 3112,
-        title: "JSJ 402: SEO for Developers with Vitali Zaidman",
-        description: null,
-        mp3: "https://media.devchat.tv/js-jabber/JSJ_402_Vitali_Zaidmanv.mp3",
-        publishedDate: "2019-10-22T10:00:00",
-        producerName: "JS Jabber",
-        producerId: 14
-      },
-      {
-        id: 3114,
-        title: "AiA 261: Angular Projects with Zama Khan Mohammed",
-        description: null,
-        mp3:
-          "https://media.devchat.tv/adventures-in-angular/AiA_261_Zama_Khan_Mohammed.mp3",
-        publishedDate: "2019-10-22T10:00:00",
-        producerName: "Adventures in Angular",
-        producerId: 8
-      },
-      {
-        id: 3109,
-        title: "VoV 084: Nuxt.JS With Sebastien Chopin",
-        description: null,
-        mp3: "https://media.devchat.tv/viewsonvue/VoV_084_Sebastien_Chopin.mp3",
-        publishedDate: "2019-10-22T10:00:00",
-        producerName: "Views on Vue",
-        producerId: 17
-      },
-      {
-        id: 3110,
-        title: "MJS 128: Mike Hartington",
-        description: null,
-        mp3: "https://media.devchat.tv/my-js-story/MJS_128_Mike_Hartington.mp3",
-        publishedDate: "2019-10-22T10:00:00",
-        producerName: "JS Jabber",
-        producerId: 14
-      },
-      {
-        id: 3111,
-        title: "MJS 128: Mike Hartington",
-        description: null,
-        mp3: "https://media.devchat.tv/my-js-story/MJS_128_Mike_Hartington.mp3",
-        publishedDate: "2019-10-22T10:00:00",
-        producerName: "JS Jabber",
-        producerId: 14
-      },
-      {
-        id: 3113,
-        title: "MAS 095: Brad McAlister",
-        description: null,
-        mp3:
-          "https://media.devchat.tv/my-angular-story/MAS_095_Brad_McAlister.mp3",
-        publishedDate: "2019-10-22T10:00:00",
-        producerName: "Adventures in Angular",
-        producerId: 8
-      },
-      {
-        id: 3108,
-        title: "RNR 140: Best Practices with Zain Sajjad",
-        description: null,
-        mp3:
-          "https://media.devchat.tv/reactnativeradio/RNR_140_Zain_Sajjad.mp3",
-        publishedDate: "2019-10-22T10:00:00",
-        producerName: "React Native radio",
-        producerId: 6
-      },
-      {
-        id: 3107,
-        title: "194: Off the Main Thread",
-        description: null,
-        mp3: "https://traffic.libsyn.com/secure/thewebplatform/TWPP-194.mp3",
-        publishedDate: "2019-10-22T00:17:40",
-        producerName: "The Web Platform podcast",
-        producerId: 10
-      },
-      {
-        id: 3106,
-        title: "383: What’s Up with CMS’s?",
-        description: null,
-        mp3:
-          "https://cdn.simplecast.com/audio/167887/167887a0-ac00-4cf9-bc69-b5ca845997db/b832cdcb-f926-4e7e-9a12-947ad9d0538e/shoptalkshow-383_tc.mp3",
-        publishedDate: "2019-10-21T14:00:13",
-        producerName: "Shop talk show",
-        producerId: 5
-      }
-    ];
+    this.loadPodcasts();
   },
   mounted() {
-    var mediaElements = document.querySelectorAll("video, audio"),
-      total = mediaElements.length;
-   
-    for (var i = 0; i < total; i++) {
-      // eslint-disable-next-line
-      new MediaElementPlayer(mediaElements[i], {
-        pluginPath: "https://cdn.jsdelivr.net/npm/mediaelement@4.2.7/build/",
-        shimScriptAccess: "always",
-        success: function() {
-          var target = document.body.querySelectorAll(".player"),
-            targetTotal = target.length;
-          for (var j = 0; j < targetTotal; j++) {
-            target[j].style.visibility = "visible";
-          }
-        }
-      });
-    }
+    this.fixPlayer();
   }
-
 };
 </script>
 
