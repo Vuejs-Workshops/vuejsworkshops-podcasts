@@ -57,7 +57,7 @@
           <div class="image" :style="{'background-image': 'url(' + randomPic() + ')'}"></div>
           <div class="text">
             <h3 class="font-weight-light">
-              <a href="single-post.html">{{show.title}}</a>
+                <router-link :to="`/${show.id}`">{{show.title}}</router-link>
             </h3>
             <div class="text-white mb-3">
               <span class="text-black-opacity-05">
@@ -267,6 +267,25 @@ export default {
         producerId: 5
       }
     ];
+  },
+  mounted() {
+    var mediaElements = document.querySelectorAll("video, audio"),
+      total = mediaElements.length;
+   
+    for (var i = 0; i < total; i++) {
+      // eslint-disable-next-line
+      new MediaElementPlayer(mediaElements[i], {
+        pluginPath: "https://cdn.jsdelivr.net/npm/mediaelement@4.2.7/build/",
+        shimScriptAccess: "always",
+        success: function() {
+          var target = document.body.querySelectorAll(".player"),
+            targetTotal = target.length;
+          for (var j = 0; j < targetTotal; j++) {
+            target[j].style.visibility = "visible";
+          }
+        }
+      });
+    }
   }
 
 };
