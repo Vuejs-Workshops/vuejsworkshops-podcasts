@@ -28,6 +28,7 @@
 
     <div class="container site-section">
       <div class="player mb-5">
+        <!-- <mediaelement preload="none"  :source="podcast.mp3" width="100" height="4" style="max-width: 100%; max-height:10%" /> -->
         <audio id="player2" preload="none" controls style="max-width: 100%">
           <source :src="podcast.mp3" type="audio/mp3">
         </audio>
@@ -51,10 +52,12 @@
 import PodcastsFooter from "./PodcastsFooter";
 import PodcastsHeader from "./PodcastsHeader";
 import {mapState, mapActions } from "vuex";
+import { Mediaelement } from 'vue-mediaelement';
+
 
 export default {
   name: "Podcast",
-  components: { PodcastsFooter, PodcastsHeader },
+  components: { PodcastsFooter, PodcastsHeader,Mediaelement },
   computed:{...mapState(['podcast'])},
   methods: {
             ...mapActions(['loadPodcast'])
@@ -83,3 +86,11 @@ created() {
   }
 };
 </script>
+
+
+<style scoped>
+.my-play {
+  height: 200px;
+  text-align: center;
+}
+</style>

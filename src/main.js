@@ -7,6 +7,11 @@ import VueAxios from 'vue-axios'
 
 Vue.use(VueAxios, axios)
 
+
+require('vue-mediaelement/dist/vue-mediaelement.css');
+require('../node_modules/vue-mediaelement/dist/vue-mediaelement.css');
+
+
 Vue.config.productionTip = false;
 
 Vue.filter('formatDate', function (dt) {
